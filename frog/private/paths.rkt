@@ -7,6 +7,7 @@
 (provide (all-from-out "../paths.rkt")
          example
          permalink-path
+         mutant-permalink-path
          post-path->link
          editor-command-string)
 
@@ -16,6 +17,12 @@
 
 ;; For interactive development and for --init feature.
 (define-runtime-path example "../../example/")
+
+(define (mutant-permalink-path metadata-hash)
+  (define permalink-relpath (hash-ref metadata-hash "permalink-relpath" #f))
+  (if permalink-relpath
+      (build-path (www-path) (hash-ref metadata-hash "permalink-relpath"))
+      #f))
 
 (define/contract (permalink-path d title filename pattern)
   (-> date? string? string? string? path?)

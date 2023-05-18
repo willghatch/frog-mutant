@@ -72,7 +72,7 @@
          (define text (render-template path-to (path->string name) '()))
          (parse-markdown text footnote-prefix)]))
     ;; Split to the meta-data and the body
-    (match-define (list title date-str tags body) (meta-data xs name))
+    (match-define (list title date-str tags body metadata-hash) (meta-data xs name))
     (when (member "DRAFT" tags)
       (prn0 "Skipping ~a because it has the tag, 'DRAFT'"
             (abs->rel/src path))
@@ -82,11 +82,16 @@
     ;; Make the destination HTML pathname
     (define date-struct (date-string->struct/user-error path date-str))
     (define dest-path
-      (permalink-path date-struct
+      #;(permalink-path date-struct
                       (~> title string-downcase slug)
                       (match (path->string name)
                         [(pregexp post-file-px (list _ _ s)) s])
-                      (current-permalink)))
+                      (current-permalink))
+      (mutant-permalink-path metadata-hash))
+    (when (not dest-path)
+      (prn0 "Skipping ~a because it lacks permalink-relpath metadata"
+            (abs->rel/src path))
+      (return #f))
     (post title
           path
           (file-or-directory-modify-seconds path)
@@ -129,7 +134,7 @@
                  ([s (string-split plain-text "\n")])
          (match s
            [(pregexp "^ *(.+?): *(.*?) *$" (list _ k v))
-            #:when (member k '("Title" "Date" "Tags" "Authors"))
+            ;#:when (member k '("Title" "Date" "Tags" "Authors"))
             (hash-set h k v)]
            [s (warn s) h])))
      (define (required k)
@@ -147,7 +152,8 @@
                    (~>> (optional "Authors")
                         tag-string->tags
                         (map make-author-tag)))
-           more)]
+           more
+           h)]
     [(cons x _) (err (~a "found:\n" (format "~v" x)))]
     [_ (err "none found")]))
 
