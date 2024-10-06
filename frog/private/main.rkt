@@ -79,7 +79,7 @@
                                                 (build-list depth (λ _ 'up)))))))
     (define edit-new-post? (make-parameter #f))
     (command-line
-     #:program "raco frog"
+     #:program "raco frog-mutant"
      #:once-each
      [("--doc")
       (""
