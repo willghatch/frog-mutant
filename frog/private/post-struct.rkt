@@ -18,6 +18,7 @@
               blurb      ;string? - the post summary
               more?      ;boolean? - is `body` more than just `blurb`?
               body       ;string? - the post full contents
+              metadata-hash ;hash? - the metadata-hash containing tags, title, etc
               ) #:prefab)
 
 (define post-file-px

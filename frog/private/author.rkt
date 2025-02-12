@@ -52,7 +52,8 @@
                           "baz")
                     "blurb"
                     #f
-                    "body")])
+                    "body"
+                    (hash))])
        (check-equal? (post-authors p)
                      (list "Alice Doe" "Bob Doe"))
        (check-equal? (post-author p)
@@ -63,7 +64,8 @@
                     '("foo" "bar" "baz") ;no bylines
                     "blurb"
                     #f
-                    "body")])
+                    "body"
+                    (hash))])
        (check-equal? (post-authors p)
                      (list "Default Author"))
        (check-equal? (post-author p)

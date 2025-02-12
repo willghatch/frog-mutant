@@ -103,7 +103,8 @@
           tags
           (~> blurb enhance-body xexprs->string)
           more?
-          (~> body enhance-body xexprs->string))))
+          (~> body enhance-body xexprs->string)
+          metadata-hash)))
 
 (define (date-string->struct/user-error path s)
   (with-handlers
@@ -252,7 +253,7 @@
 
 (define/contract (write-post-page p older newer)
   (post? (or/c post? #f) (or/c post? #f) . -> . void)
-  (match-define (post title _ _ dest-path uri-path date _ _ tags blurb _ body) p)
+  (match-define (post title _ _ dest-path uri-path date _ _ tags blurb _ body metadata-hash) p)
   (prn1 "Generating post ~a" (abs->rel/www dest-path))
   (define older-uri (and older (post-uri-path older)))
   (define newer-uri (and newer (post-uri-path newer)))
@@ -270,6 +271,7 @@
                'authors     (~> tags author-tags->xexpr xexpr->string)
                'date+tags   (~> (date+tags->xexpr date tags) xexpr->string)
                'content     body
+               'metadata-hash metadata-hash
                'older-uri   older-uri
                'newer-uri   newer-uri
                'older-title (and older (title->htmlstr (post-title older)))
