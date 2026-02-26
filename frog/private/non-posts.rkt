@@ -82,7 +82,13 @@
     (cons uri-path v)))
 
 (define (make-title xs path)
-  (or (for/or ([x (in-list xs)])
+  (or ;; Check for <!-- page-title: ... --> comment override
+      (for/or ([x (in-list xs)])
+        (match x
+          [`(!HTML-COMMENT () ,(pregexp "^\\s*page-title:\\s*(.+?)\\s*$" (list _ title)))
+           title]
+          [_ #f]))
+      (for/or ([x (in-list xs)])
         (match x
           ;; First h1 header, if any -- Scribble style with <a> anchor
           [`(h1 (,_ ...) (a . ,_) . ,els)
