@@ -74,7 +74,15 @@
      '()]))
 
 (define (adjust-scribble-html xs img-uri)
-  (for/list ([x (in-list xs)])
+  ;; Newer Scribble wraps content in <section> elements; splice them to expose
+  ;; the metadata <p> as the first top-level element, as meta-data expects.
+  (define flat-xs
+    (apply append
+           (for/list ([x (in-list xs)])
+             (match x
+               [`(section ,_ . ,children) children]
+               [_ (list x)]))))
+  (for/list ([x (in-list flat-xs)])
     (xexpr-map
      (lambda (x _)
        (list
